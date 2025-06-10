@@ -1,0 +1,35 @@
+# Use CUDA-enabled PyTorch base image
+FROM pytorch/pytorch:2.0.0-cuda11.7-cudnn8-runtime
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY src/ src/
+COPY models/ models/
+
+# Create non-root user
+RUN useradd -m -u 1000 appuser
+USER appuser
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV MODEL_PATH=/app/models/plastic_yolo11.pt
+ENV CUDA_VISIBLE_DEVICES=0
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
+
+# Run the vision service
+CMD ["python", "-m", "src.vision.plastic_classifier"] 

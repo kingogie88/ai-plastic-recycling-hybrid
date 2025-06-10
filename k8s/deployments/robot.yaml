@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-circo-robot
+  namespace: recycling
+  labels:
+    app: ai-circo
+    component: robot
+spec:
+  replicas: 1  # Only one robot controller per facility
+  selector:
+    matchLabels:
+      app: ai-circo
+      component: robot
+  strategy:
+    type: Recreate  # Cannot have multiple controllers for same robot
+  template:
+    metadata:
+      labels:
+        app: ai-circo
+        component: robot
+    spec:
+      containers:
+      - name: robot
+        image: ai-circo/robot:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+        env:
+        - name: ROBOT_IP
+          valueFrom:
+            configMapKeyRef:
+              name: ai-circo-config
+              key: robot-ip
+        - name: ROBOT_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ai-circo-config
+              key: robot-port
+        - name: MAX_WORKERS
+          value: "4"
+        - name: EMERGENCY_STOP_TIMEOUT
+          value: "5"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+        - name: robot-certs
+          mountPath: /app/certs
+      volumes:
+      - name: config
+        configMap:
+          name: ai-circo-config
+      - name: robot-certs
+        secret:
+          secretName: robot-certs
+      nodeSelector:
+        role: robot-controller 

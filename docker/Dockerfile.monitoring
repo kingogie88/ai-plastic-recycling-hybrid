@@ -1,0 +1,41 @@
+FROM grafana/grafana:10.0.0 as grafana
+
+FROM prom/prometheus:v2.45.0 as prometheus
+
+FROM alpine:3.18
+
+# Install required packages
+RUN apk add --no-cache \
+    grafana \
+    prometheus \
+    curl
+
+# Copy Grafana configs
+COPY --from=grafana /usr/share/grafana /usr/share/grafana
+COPY monitoring/grafana/dashboards /etc/grafana/provisioning/dashboards
+COPY monitoring/grafana/datasources /etc/grafana/provisioning/datasources
+
+# Copy Prometheus configs
+COPY --from=prometheus /bin/prometheus /bin/prometheus
+COPY --from=prometheus /usr/share/prometheus /usr/share/prometheus
+COPY monitoring/prometheus/prometheus.yml /etc/prometheus/prometheus.yml
+COPY monitoring/prometheus/rules /etc/prometheus/rules
+
+# Create necessary directories
+RUN mkdir -p /var/lib/grafana /var/lib/prometheus \
+    && chown -R grafana:grafana /var/lib/grafana \
+    && chown -R nobody:nobody /var/lib/prometheus
+
+# Expose ports
+EXPOSE 3000 9090
+
+# Set health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
+
+# Copy startup script
+COPY monitoring/start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Run services
+CMD ["/start.sh"] 

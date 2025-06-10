@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-circo-api
+  namespace: recycling
+  labels:
+    app: ai-circo
+    component: api
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: ai-circo
+    component: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-circo-vision
+  namespace: recycling
+  labels:
+    app: ai-circo
+    component: vision
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8001
+    targetPort: 8001
+    protocol: TCP
+    name: http
+  selector:
+    app: ai-circo
+    component: vision
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-circo-robot
+  namespace: recycling
+  labels:
+    app: ai-circo
+    component: robot
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8002
+    targetPort: 8002
+    protocol: TCP
+    name: http
+  selector:
+    app: ai-circo
+    component: robot
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-circo-monitoring
+  namespace: recycling
+  labels:
+    app: ai-circo
+    component: monitoring
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+    name: grafana
+  - port: 9090
+    targetPort: 9090
+    protocol: TCP
+    name: prometheus
+  selector:
+    app: ai-circo
+    component: monitoring 
