@@ -1,0 +1,10 @@
+models:
+  plastic_yolo11.pt:
+    url: https://dev-models.recycling-ai.com/v11/plastic_yolo11.pt
+    version: "11.0.0"
+    sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  # Replace with actual hash
+    description: YOLOv8 model for plastic type detection
+    input_shape: [640, 640, 3]
+    classes: ["PET", "HDPE", "PVC", "LDPE", "PP", "PS", "OTHER"]
+    framework: pytorch
+    license: MIT 

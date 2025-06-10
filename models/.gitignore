@@ -1,0 +1,11 @@
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.h5
+*.weights
+*.bin
+cache/
+!.gitignore
+!README.md
+!download_models.py 
