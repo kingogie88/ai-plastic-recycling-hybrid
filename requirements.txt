@@ -1,15 +1,41 @@
 # Core Dependencies
+fastapi>=0.104.0        # API framework
+uvicorn>=0.24.0         # ASGI server
+pydantic>=2.4.2         # Data validation
+sqlalchemy>=2.0.23      # Database ORM
+psycopg2-binary>=2.9.9  # PostgreSQL adapter
+redis>=5.0.1            # Redis client
+python-jose>=3.3.0      # JWT tokens
+passlib>=1.7.4          # Password hashing
+python-multipart>=0.0.6 # Form data parsing
+
+# Vision System
 opencv-python>=4.8.0     # Image processing
 numpy>=1.24.0           # Numerical computing
-Pillow>=10.0.0         # Image processing
+Pillow>=10.0.0          # Image processing
+torch>=2.1.0            # PyTorch
+torchvision>=0.16.0     # Vision models
+ultralytics>=8.0.0      # YOLO
+
+# Monitoring
+prometheus-client>=0.17.1 # Metrics
+python-json-logger>=2.0.7 # JSON logging
 
 # Testing
 pytest>=7.0.0
 pytest-asyncio>=0.21.0
 pytest-cov>=4.1.0
+httpx>=0.25.0           # Async HTTP client for testing
 
 # Development
-black>=23.7.0          # Code formatting
-isort>=5.12.0          # Import sorting
-flake8>=6.1.0          # Linting
-mypy>=1.5.1           # Type checking 
+black>=23.7.0           # Code formatting
+isort>=5.12.0           # Import sorting
+flake8>=6.1.0           # Linting
+mypy>=1.5.1             # Type checking
+bandit>=1.7.5           # Security linting
+safety>=2.3.5           # Dependency scanning
+pre-commit>=3.5.0       # Git hooks
+
+# Documentation
+mkdocs>=1.5.3           # Documentation
+mkdocs-material>=9.4.6  # Documentation theme 
